@@ -8,868 +8,590 @@
 <meta name="apple-mobile-web-app-title" content="GYM REJAM">
 <meta name="theme-color" content="#090910">
 <title>GYM REJAM</title>
-<link rel="manifest" href="manifest.json">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans:wght@400;500;700&display=swap');
-
-  :root {
-    --gold: #c9a84c;
-    --gold-light: #f0cc70;
-    --bg: #090910;
-    --bg2: #111120;
-    --bg3: #181830;
-    --text: #e8e0d0;
-    --text-dim: #7a8899;
-    --green: #4aaa78;
-    --blue: #4a88cc;
-    --red: #e86c4a;
-    --safe-top: env(safe-area-inset-top, 44px);
-    --safe-bot: env(safe-area-inset-bottom, 34px);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans', sans-serif;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    overflow-x: hidden;
-    padding-bottom: calc(70px + var(--safe-bot));
-  }
-
-  /* HEADER */
-  .header {
-    background: linear-gradient(180deg, #12122e 0%, #090910 100%);
-    padding: calc(var(--safe-top) + 14px) 20px 16px;
-    border-bottom: 1px solid #c9a84c22;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .header-inner { display: flex; justify-content: space-between; align-items: center; }
-  .app-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .week-badge { background: var(--gold); color: #090910; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; letter-spacing: 1px; }
-
-  /* BOTTOM NAV */
-  .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-    background: #0d0d20;
-    border-top: 1px solid #2a2a4e;
-    padding: 10px 0 calc(var(--safe-bot));
-    display: flex;
-  }
-  .nav-btn {
-    flex: 1; background: none; border: none; cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    padding: 4px 0;
-  }
-  .nav-icon { font-size: 20px; line-height: 1; }
-  .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; color: var(--text-dim); transition: color 0.2s; }
-  .nav-btn.active .nav-label { color: var(--gold); }
-  .nav-btn.active .nav-icon { filter: drop-shadow(0 0 6px var(--gold)); }
-
-  /* SCREENS */
-  .screen { display: none; padding: 16px; animation: fadeIn 0.2s ease; }
-  .screen.active { display: block; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* CARDS */
-  .card {
-    background: var(--bg2);
-    border: 1px solid #2a2a4e;
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 12px;
-  }
-  .card-header {
-    padding: 14px 16px;
-    display: flex; justify-content: space-between; align-items: center;
-    cursor: pointer; -webkit-user-select: none;
-  }
-  .card-body { display: none; padding: 0 16px 14px; border-top: 1px solid #1e1e38; }
-  .card-body.open { display: block; }
-
-  /* WEEK GRID */
-  .week-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 14px; }
-  .week-btn {
-    aspect-ratio: 1; border-radius: 12px; border: 1.5px solid #2a2a4e;
-    background: var(--bg2); color: var(--text-dim);
-    font-size: 15px; font-weight: 700; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    position: relative; transition: all 0.15s;
-  }
-  .week-btn.done { border-color: #2a4a2a; background: #0d1f0d; color: var(--green); }
-  .week-btn.active { background: var(--gold); border-color: var(--gold); color: #090910; }
-  .week-btn.done::after { content: '✓'; position: absolute; top: -4px; right: -3px; font-size: 9px; background: var(--green); color: #090910; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; }
-
-  /* EXERCISE ROW */
-  .ex-row {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    padding: 10px 0; border-bottom: 1px solid #16162a;
-    gap: 12px;
-  }
-  .ex-row:last-child { border-bottom: none; }
-  .ex-name { font-size: 13px; color: var(--text); }
-  .ex-note { font-size: 11px; color: #4a6a7a; margin-top: 2px; font-style: italic; }
-  .ex-sets { background: #1e1e38; padding: 4px 10px; border-radius: 8px; color: var(--gold); font-weight: 700; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
-
-  /* MACRO GRID */
-  .macro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-  .macro-card { background: #0f0f1e; border-radius: 12px; padding: 12px 14px; }
-  .macro-label { font-size: 11px; color: var(--text-dim); }
-  .macro-val { font-size: 16px; font-weight: 700; margin-top: 3px; }
-
-  /* MEAL */
-  .meal-time { font-size: 11px; color: var(--gold); }
-  .meal-name { font-size: 15px; font-weight: 700; margin-top: 2px; }
-  .meal-item { display: flex; gap: 8px; padding: 7px 0; border-bottom: 1px solid #14142a; font-size: 13px; color: #c0b8a8; }
-  .meal-item:last-child { border: none; }
-  .meal-dot { color: var(--gold); font-size: 10px; margin-top: 2px; flex-shrink: 0; }
-
-  /* PROGRESS */
-  .progress-ring { display: flex; justify-content: center; margin: 20px 0; }
-  .ring-wrap { position: relative; width: 160px; height: 160px; }
-  .ring-wrap svg { transform: rotate(-90deg); }
-  .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .ring-num { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--gold); line-height: 1; }
-  .ring-sub { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; margin-top: 2px; }
-
-  /* MONTH TABS */
-  .month-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
-  .month-tab { flex: 1; padding: 8px 4px; border-radius: 10px; border: 1px solid #2a2a4e; background: var(--bg2); color: var(--text-dim); font-size: 11px; font-weight: 700; letter-spacing: 1px; cursor: pointer; text-align: center; transition: all 0.2s; }
-  .month-tab.active { background: var(--gold); border-color: var(--gold); color: #090910; }
-
-  /* SPLIT BADGE */
-  .split-badge { display: inline-block; background: #1e1e38; color: var(--text-dim); font-size: 10px; padding: 3px 8px; border-radius: 6px; letter-spacing: 1px; margin-bottom: 4px; }
-
-  /* DAY PILL */
-  .day-pill { background: #c9a84c18; color: var(--gold); font-size: 10px; padding: 2px 8px; border-radius: 6px; letter-spacing: 1px; }
-
-  /* INFO CARDS */
-  .info-card { background: var(--bg2); border: 1px solid #2a2a4e; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; display: flex; gap: 12px; }
-  .info-icon { font-size: 20px; flex-shrink: 0; }
-  .info-title { color: var(--gold); font-size: 12px; font-weight: 700; margin-bottom: 3px; }
-  .info-text { color: #b0a898; font-size: 13px; line-height: 1.5; }
-
-  /* CHEVRON */
-  .chev { color: var(--gold); font-size: 14px; transition: transform 0.2s; flex-shrink: 0; }
-  .chev.open { transform: rotate(180deg); }
-
-  /* SECTION TITLE */
-  .sec-title { font-size: 10px; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; }
-
-  /* RESULT BOX */
-  .result-box { background: #0d1f0d; border: 1px solid #2a4a2a; border-radius: 14px; padding: 16px; margin-top: 4px; }
-
-  /* ADD TO HOME BANNER */
-  .add-banner { background: linear-gradient(135deg, #1a1a38, #12122e); border: 1px solid var(--gold); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; display: flex; gap: 12px; align-items: flex-start; }
-  .add-banner-text { flex: 1; }
-  .add-banner-title { color: var(--gold); font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-  .add-banner-desc { color: var(--text-dim); font-size: 11px; line-height: 1.5; }
-  .close-btn { background: none; border: none; color: var(--text-dim); font-size: 18px; cursor: pointer; padding: 0; }
-
-  .divider { height: 1px; background: #1e1e38; margin: 10px 0; }
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans:wght@400;600;700&display=swap');
+:root {
+  --gold:#c9a84c; --gold2:#f0cc70;
+  --bg:#090910; --bg2:#111120; --bg3:#1a1a30;
+  --text:#e8e0d0; --dim:#667788;
+  --green:#4aaa78; --red:#e86c4a; --blue:#4a88cc;
+  --st: env(safe-area-inset-top,44px);
+  --sb: env(safe-area-inset-bottom,34px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif;padding-bottom:calc(72px + var(--sb));min-height:100vh;}
+.header{background:#0d0d22;padding:calc(var(--st) + 12px) 18px 14px;border-bottom:1px solid #c9a84c22;position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;}
+.title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.badge{background:var(--gold);color:#090910;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:#0d0d1e;border-top:1px solid #2a2a4e;padding:8px 0 calc(var(--sb));display:flex;}
+.nb{flex:1;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;}
+.ni{font-size:22px;}
+.nl{font-size:10px;font-weight:700;letter-spacing:0.5px;color:var(--dim);}
+.nb.on .nl{color:var(--gold);}
+.screen{display:none;padding:14px 16px;animation:fi 0.2s ease;}
+.screen.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--bg2);border:1px solid #2a2a3e;border-radius:14px;margin-bottom:10px;overflow:hidden;}
+.ch{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+.cb{padding:0 16px 12px;border-top:1px solid #1e1e34;display:none;}
+.cb.on{display:block;}
+.chev{color:var(--gold);font-size:14px;transition:transform 0.2s;flex-shrink:0;}
+.chev.on{transform:rotate(180deg);}
+.ex{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid #14142a;gap:10px;}
+.ex:last-child{border:none;}
+.en{font-size:13px;color:var(--text);}
+.enote{font-size:11px;color:#4a6a7a;margin-top:2px;font-style:italic;}
+.es{background:#1a1a34;padding:4px 10px;border-radius:8px;color:var(--gold);font-weight:700;font-size:12px;white-space:nowrap;flex-shrink:0;}
+.wgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:14px;}
+.wb{aspect-ratio:1;border-radius:11px;border:1.5px solid #2a2a4e;background:var(--bg2);color:var(--dim);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;}
+.wb.done{border-color:#2a4a2a;background:#0d1f0d;color:var(--green);}
+.wb.cur{background:var(--gold);border-color:var(--gold);color:#090910;}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.mc{background:#0f0f1e;border-radius:11px;padding:12px 14px;}
+.ml{font-size:11px;color:var(--dim);}
+.mv{font-size:15px;font-weight:700;margin-top:3px;}
+.mi{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid #14142a;font-size:13px;color:#c0b8a8;}
+.mi:last-child{border:none;}
+.dot{color:var(--gold);font-size:10px;margin-top:2px;flex-shrink:0;}
+.st{font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:10px;}
+.dp{background:#c9a84c18;color:var(--gold);font-size:10px;padding:2px 8px;border-radius:6px;letter-spacing:1px;}
+.ic{background:var(--bg2);border:1px solid #2a2a3e;border-radius:13px;padding:13px 15px;margin-bottom:9px;display:flex;gap:11px;}
+.rbox{background:#0d1f0d;border:1px solid #2a4a2a;border-radius:13px;padding:15px;margin-top:6px;}
+.wbox{background:var(--bg2);border:1px solid #2a2a3e;border-radius:12px;padding:12px 14px;margin-bottom:8px;}
+.pbtn{flex:1;padding:8px 4px;border-radius:8px;border:1px solid #2a2a4e;background:var(--bg);color:var(--dim);font-size:11px;cursor:pointer;font-weight:600;}
+.pbtn.done{border-color:#2a4a2a;background:#0d1f0d;color:var(--green);}
+.ring-wrap{position:relative;width:150px;height:150px;margin:0 auto 20px;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.rnum{font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--gold);line-height:1;}
+.rsub{font-size:10px;color:var(--dim);letter-spacing:1px;}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
-  <div class="header-inner">
-    <div>
-      <div class="app-title">💪 GYM REJAM</div>
-    </div>
-    <div class="week-badge" id="currentWeekBadge">3-HAFTA</div>
-  </div>
+  <div class="title">&#x1F4AA; GYM REJAM</div>
+  <div class="badge" id="wbadge">3-HAFTA</div>
 </div>
 
-<!-- SCREENS -->
-<div id="screen-mashq" class="screen active"></div>
-<div id="screen-ovqat" class="screen"></div>
-<div id="screen-progress" class="screen"></div>
-<div id="screen-info" class="screen"></div>
+<div id="s-mashq" class="screen on"></div>
+<div id="s-ovqat" class="screen"></div>
+<div id="s-progress" class="screen"></div>
+<div id="s-info" class="screen"></div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <button class="nav-btn active" onclick="switchTab('mashq', this)">
-    <span class="nav-icon">🏋️</span>
-    <span class="nav-label">MASHQLAR</span>
-  </button>
-  <button class="nav-btn" onclick="switchTab('ovqat', this)">
-    <span class="nav-icon">🍽️</span>
-    <span class="nav-label">OVQAT</span>
-  </button>
-  <button class="nav-btn" onclick="switchTab('progress', this)">
-    <span class="nav-icon">📊</span>
-    <span class="nav-label">PROGRESS</span>
-  </button>
-  <button class="nav-btn" onclick="switchTab('info', this)">
-    <span class="nav-icon">💡</span>
-    <span class="nav-label">MA'LUMOT</span>
-  </button>
+<nav class="nav">
+  <button class="nb on" onclick="go('mashq',this)"><span class="ni">&#x1F3CB;</span><span class="nl">MASHQLAR</span></button>
+  <button class="nb" onclick="go('ovqat',this)"><span class="ni">&#x1F37D;</span><span class="nl">OVQAT</span></button>
+  <button class="nb" onclick="go('progress',this)"><span class="ni">&#x1F4CA;</span><span class="nl">PROGRESS</span></button>
+  <button class="nb" onclick="go('info',this)"><span class="ni">&#x1F4A1;</span><span class="nl">MA'LUMOT</span></button>
 </nav>
 
 <script>
-// ─── DATA ───────────────────────────────────────────────────────────────────
-const weeks = {
-  1: { split:"Full Body", theme:"Texnika o'rganish", done:true, days:[
-    { label:"Full Body A", day:"Dushanba", ex:[
-      {n:"Barbell Back Squat", s:3, r:"10", note:"Engilroq og'irlik, texnikaga e'tibor"},
-      {n:"Flat Barbell Bench Press", s:3, r:"10", note:"Grip eni — yelkadan bir qarich keng"},
-      {n:"Bent-over Barbell Row", s:3, r:"10", note:"Belni to'g'ri tut"},
-      {n:"Dumbbell Shoulder Press", s:3, r:"12", note:""},
-      {n:"Plank", s:3, r:"30 sek", note:""},
-    ]},
-    { label:"Full Body B", day:"Chorshanba", ex:[
-      {n:"Romanian Deadlift (DB)", s:3, r:"10", note:"Belni bukma, tos orqaga"},
-      {n:"Incline DB Press", s:3, r:"12", note:"45° burchak"},
-      {n:"Lat Pulldown", s:3, r:"12", note:"Ko'krakka tortib tushir"},
-      {n:"DB Lunges", s:3, r:"10 har oyoq", note:""},
-      {n:"Cable Crunch", s:3, r:"15", note:""},
-    ]},
-    { label:"Full Body C", day:"Juma", ex:[
-      {n:"Leg Press", s:3, r:"12", note:"Oyoqni yelka kengligi"},
-      {n:"Machine Shoulder Press", s:3, r:"12", note:""},
-      {n:"Seated Cable Row", s:3, r:"12", note:""},
-      {n:"Tricep Pushdown (Cable)", s:3, r:"15", note:""},
-      {n:"Hanging Leg Raise", s:3, r:"12", note:""},
-    ]},
+var CW = 3;
+var OC = null;
+var OM = null;
+var DONE = {};
+
+var W = {
+1:{sp:"Full Body",th:"Texnika o'rganish",done:true,days:[
+  {lb:"Full Body A",dy:"Dushanba",ex:[
+    {n:"Barbell Back Squat",s:3,r:"10",nt:"Engilroq, texnikaga e'tibor"},
+    {n:"Flat Barbell Bench Press",s:3,r:"10",nt:"Grip eni yelkadan bir qarich keng"},
+    {n:"Bent-over Barbell Row",s:3,r:"10",nt:"Belni to'g'ri tut"},
+    {n:"Dumbbell Shoulder Press",s:3,r:"12",nt:""},
+    {n:"Plank",s:3,r:"30 sek",nt:""}
   ]},
-  2: { split:"Full Body", theme:"Og'irlikni oshirish", done:true, days:[
-    { label:"Full Body A+", day:"Dushanba", ex:[
-      {n:"Barbell Back Squat", s:3, r:"10", note:"+2.5kg o'tgan haftaga nisbatan"},
-      {n:"Flat Barbell Bench Press", s:3, r:"10", note:"+2.5kg"},
-      {n:"Bent-over Barbell Row", s:3, r:"10", note:"+2.5kg"},
-      {n:"DB Shoulder Press", s:3, r:"12", note:"+2kg"},
-      {n:"Ab Wheel Rollout", s:3, r:"8", note:"Tizzadan boshlash mumkin"},
-    ]},
-    { label:"Full Body B+", day:"Chorshanba", ex:[
-      {n:"Barbell Romanian Deadlift", s:3, r:"10", note:"Endi shtanga bilan"},
-      {n:"Incline DB Press", s:3, r:"12", note:"+2kg"},
-      {n:"Lat Pulldown (Wide Grip)", s:3, r:"12", note:""},
-      {n:"Walking DB Lunges", s:3, r:"12 har oyoq", note:""},
-      {n:"Cable Crunch", s:3, r:"15", note:"+og'irlik"},
-    ]},
-    { label:"Full Body C+", day:"Juma", ex:[
-      {n:"Leg Press", s:4, r:"12", note:"+1 set qo'shildi"},
-      {n:"Arnold Press (DB)", s:3, r:"12", note:""},
-      {n:"Seated Cable Row", s:3, r:"12", note:"+og'irlik"},
-      {n:"Tricep Pushdown + Overhead Ext.", s:3, r:"12", note:"Superset"},
-      {n:"Hanging Leg Raise", s:3, r:"15", note:""},
-    ]},
+  {lb:"Full Body B",dy:"Chorshanba",ex:[
+    {n:"Romanian Deadlift (DB)",s:3,r:"10",nt:"Belni bukma, tos orqaga"},
+    {n:"Incline DB Press",s:3,r:"12",nt:"45 darajali burchak"},
+    {n:"Lat Pulldown",s:3,r:"12",nt:"Ko'krakka tortib tushir"},
+    {n:"DB Lunges",s:3,r:"10 har oyoq",nt:""},
+    {n:"Cable Crunch",s:3,r:"15",nt:""}
   ]},
-  3: { split:"Push / Pull / Legs", theme:"Split boshlandi", done:false, days:[
-    { label:"Push — Ko'krak + Yelka + Trisep", day:"Dushanba", ex:[
-      {n:"Flat Barbell Bench Press", s:4, r:"8-10", note:"Asosiy harakat, progressiv og'irlik"},
-      {n:"Incline DB Press", s:3, r:"10-12", note:""},
-      {n:"Cable Fly (Low to High)", s:3, r:"12-15", note:"Ko'krak yuqori qismi"},
-      {n:"Seated Barbell OHP", s:3, r:"8-10", note:""},
-      {n:"Lateral Raise (DB)", s:3, r:"15", note:"Engil og'irlik, to'liq harakat"},
-      {n:"Tricep Pushdown (Rope)", s:3, r:"12", note:""},
-      {n:"Overhead Tricep Extension", s:3, r:"12", note:""},
-    ]},
-    { label:"Pull — Orqa + Bisep", day:"Chorshanba", ex:[
-      {n:"Conventional Deadlift", s:4, r:"6-8", note:"Asosiy kuch harakati"},
-      {n:"Lat Pulldown (Wide Grip)", s:4, r:"10", note:""},
-      {n:"Seated Cable Row", s:3, r:"10-12", note:""},
-      {n:"Face Pull (Cable)", s:3, r:"15", note:"Yelka sog'lig'i uchun majburiy"},
-      {n:"Barbell Curl", s:3, r:"10", note:""},
-      {n:"Hammer Curl (DB)", s:3, r:"12", note:""},
-    ]},
-    { label:"Legs — Oyoq + Kor", day:"Juma", ex:[
-      {n:"Barbell Back Squat", s:4, r:"8-10", note:"Parallel yoki pastroq"},
-      {n:"Leg Press", s:3, r:"12-15", note:""},
-      {n:"Romanian Deadlift", s:3, r:"10", note:""},
-      {n:"Leg Curl (Machine)", s:3, r:"12", note:""},
-      {n:"Leg Extension (Machine)", s:3, r:"15", note:""},
-      {n:"Standing Calf Raise", s:4, r:"15", note:""},
-      {n:"Plank + Leg Raise", s:3, r:"30sek+12", note:"Superset"},
-    ]},
+  {lb:"Full Body C",dy:"Juma",ex:[
+    {n:"Leg Press",s:3,r:"12",nt:"Oyoqni yelka kengligi"},
+    {n:"Machine Shoulder Press",s:3,r:"12",nt:""},
+    {n:"Seated Cable Row",s:3,r:"12",nt:""},
+    {n:"Tricep Pushdown (Cable)",s:3,r:"15",nt:""},
+    {n:"Hanging Leg Raise",s:3,r:"12",nt:""}
+  ]}
+]},
+2:{sp:"Full Body",th:"Og'irlikni oshirish",done:true,days:[
+  {lb:"Full Body A+",dy:"Dushanba",ex:[
+    {n:"Barbell Back Squat",s:3,r:"10",nt:"+2.5kg o'tgan haftaga"},
+    {n:"Flat Barbell Bench Press",s:3,r:"10",nt:"+2.5kg"},
+    {n:"Bent-over Barbell Row",s:3,r:"10",nt:"+2.5kg"},
+    {n:"DB Shoulder Press",s:3,r:"12",nt:"+2kg"},
+    {n:"Ab Wheel Rollout",s:3,r:"8",nt:"Tizzadan boshlash mumkin"}
   ]},
-  4: { split:"Push / Pull / Legs", theme:"Og'irlik oshirish", done:false, days:[
-    { label:"Push — Og'irlik +", day:"Dushanba", ex:[
-      {n:"Flat Barbell Bench Press", s:4, r:"8", note:"+2.5kg o'tgan haftaga"},
-      {n:"Decline DB Press", s:3, r:"10-12", note:"Ko'krak pastki qismi"},
-      {n:"Pec Deck (Machine Fly)", s:3, r:"15", note:"Pump uchun"},
-      {n:"Standing Barbell OHP", s:4, r:"8", note:"Core ham ishlaydi"},
-      {n:"Lateral Raise + Front Raise", s:3, r:"12", note:"Superset, engil og'irlik"},
-      {n:"Tricep Dips (Machine/Bench)", s:3, r:"12", note:""},
-      {n:"Tricep Pushdown (Bar)", s:3, r:"12", note:""},
-    ]},
-    { label:"Pull — Hajm oshirish", day:"Chorshanba", ex:[
-      {n:"Conventional Deadlift", s:4, r:"6", note:"+5kg o'tgan haftaga"},
-      {n:"Pull-up (Assisted yoki BW)", s:4, r:"6-10", note:"Imkon qadar o'z og'irlik"},
-      {n:"Cable Row (V-bar)", s:3, r:"10-12", note:""},
-      {n:"Single Arm DB Row", s:3, r:"10 har qo'l", note:"Full range of motion"},
-      {n:"Face Pull", s:3, r:"15", note:""},
-      {n:"EZ Bar Curl", s:3, r:"10", note:""},
-      {n:"Incline DB Curl", s:3, r:"12", note:"Cho'zish bilan"},
-    ]},
-    { label:"Legs — Kuch oshirish", day:"Juma", ex:[
-      {n:"Barbell Back Squat", s:5, r:"6-8", note:"+2.5kg"},
-      {n:"Hack Squat (Machine)", s:3, r:"10", note:"Son oldi fokus"},
-      {n:"Romanian Deadlift", s:4, r:"8-10", note:""},
-      {n:"Lying Leg Curl", s:3, r:"12", note:""},
-      {n:"Leg Extension", s:3, r:"15", note:""},
-      {n:"Seated Calf Raise", s:4, r:"20", note:"Sekin-sekin tushir"},
-      {n:"Cable Crunch", s:3, r:"15", note:""},
-    ]},
+  {lb:"Full Body B+",dy:"Chorshanba",ex:[
+    {n:"Barbell Romanian Deadlift",s:3,r:"10",nt:"Endi shtanga bilan"},
+    {n:"Incline DB Press",s:3,r:"12",nt:"+2kg"},
+    {n:"Lat Pulldown Wide Grip",s:3,r:"12",nt:""},
+    {n:"Walking DB Lunges",s:3,r:"12 har oyoq",nt:""},
+    {n:"Cable Crunch",s:3,r:"15",nt:"+og'irlik"}
   ]},
-  5: { split:"Push / Pull / Legs", theme:"Intensivlik oshirish", done:false, days:[
-    { label:"Push — Superset kuni", day:"Dushanba", ex:[
-      {n:"Flat Barbell Bench Press", s:5, r:"6-8", note:"5 set, og'irroq"},
-      {n:"Incline DB Press + Pec Deck", s:3, r:"10+12", note:"Superset"},
-      {n:"Seated Machine Press", s:3, r:"12", note:"Pump"},
-      {n:"Lateral Raise (Cable)", s:4, r:"15", note:"Cable bilan to'liqroq tension"},
-      {n:"Skull Crusher (EZ Bar)", s:3, r:"10", note:""},
-      {n:"Cable Pushdown + Overhead", s:3, r:"12+12", note:"Superset"},
-    ]},
-    { label:"Pull — Qo'l + Orqa pump", day:"Chorshanba", ex:[
-      {n:"Deadlift", s:3, r:"5", note:"Og'ir, sifatli"},
-      {n:"Weighted Pull-up", s:4, r:"6-8", note:"Belt bilan og'irlik"},
-      {n:"Chest Supported Row (Machine)", s:4, r:"10", note:"Orqa izolyatsiyasi"},
-      {n:"Straight Arm Pulldown", s:3, r:"15", note:"Latissimus fokus"},
-      {n:"Face Pull", s:3, r:"15", note:""},
-      {n:"Barbell Curl + Hammer", s:3, r:"10+10", note:"Superset"},
-      {n:"Concentration Curl", s:3, r:"12", note:"Izolyatsiya"},
-    ]},
-    { label:"Legs — Yuqori hajm", day:"Juma", ex:[
-      {n:"Barbell Back Squat", s:4, r:"8", note:""},
-      {n:"Front Squat yoki Goblet Squat", s:3, r:"10", note:"Son oldi va core"},
-      {n:"Leg Press (Keng oyoq)", s:4, r:"15", note:"Oyoqni keng qo'y — yon son"},
-      {n:"Stiff-Leg Deadlift", s:3, r:"10", note:""},
-      {n:"Leg Curl + Leg Extension", s:4, r:"12+12", note:"Superset"},
-      {n:"Standing + Seated Calf Raise", s:4, r:"15+20", note:"Superset"},
-      {n:"Ab Circuit", s:3, r:"15", note:"Crunch + Twist + Plank"},
-    ]},
+  {lb:"Full Body C+",dy:"Juma",ex:[
+    {n:"Leg Press",s:4,r:"12",nt:"+1 set qo'shildi"},
+    {n:"Arnold Press (DB)",s:3,r:"12",nt:""},
+    {n:"Seated Cable Row",s:3,r:"12",nt:"+og'irlik"},
+    {n:"Tricep Pushdown + Overhead Ext.",s:3,r:"12",nt:"Superset"},
+    {n:"Hanging Leg Raise",s:3,r:"15",nt:""}
+  ]}
+]},
+3:{sp:"Push/Pull/Legs",th:"Split boshlandi",done:false,days:[
+  {lb:"Push - Ko'krak + Yelka + Trisep",dy:"Dushanba",ex:[
+    {n:"Flat Barbell Bench Press",s:4,r:"8-10",nt:"Asosiy harakat, progressiv og'irlik"},
+    {n:"Incline DB Press",s:3,r:"10-12",nt:""},
+    {n:"Cable Fly (Low to High)",s:3,r:"12-15",nt:"Ko'krak yuqori qismi"},
+    {n:"Seated Barbell OHP",s:3,r:"8-10",nt:""},
+    {n:"Lateral Raise (DB)",s:3,r:"15",nt:"Engil og'irlik, to'liq harakat"},
+    {n:"Tricep Pushdown (Rope)",s:3,r:"12",nt:""},
+    {n:"Overhead Tricep Extension",s:3,r:"12",nt:""}
   ]},
-  6: { split:"Push / Pull / Legs", theme:"Deload hafta — tiklash", done:false, days:[
-    { label:"Push — Engil (Deload)", day:"Dushanba", ex:[
-      {n:"Flat Barbell Bench Press", s:3, r:"10", note:"50-60% oddiy og'irlikda"},
-      {n:"DB Shoulder Press", s:3, r:"12", note:"Engil"},
-      {n:"Cable Fly", s:3, r:"15", note:""},
-      {n:"Lateral Raise", s:3, r:"15", note:""},
-      {n:"Tricep Pushdown", s:3, r:"15", note:"Engil og'irlik"},
-    ]},
-    { label:"Pull — Engil (Deload)", day:"Chorshanba", ex:[
-      {n:"Romanian Deadlift", s:3, r:"10", note:"Deadlift emas, engil variant"},
-      {n:"Lat Pulldown", s:3, r:"12", note:""},
-      {n:"Cable Row", s:3, r:"12", note:""},
-      {n:"Face Pull", s:3, r:"20", note:""},
-      {n:"DB Curl", s:3, r:"15", note:""},
-    ]},
-    { label:"Legs — Engil (Deload)", day:"Juma", ex:[
-      {n:"Leg Press", s:3, r:"15", note:"Squat o'rniga, tiz tiklash"},
-      {n:"Walking Lunges", s:3, r:"12", note:""},
-      {n:"Leg Curl", s:3, r:"15", note:""},
-      {n:"Leg Extension", s:3, r:"15", note:""},
-      {n:"Calf Raise", s:3, r:"20", note:""},
-      {n:"Plank", s:3, r:"45 sek", note:""},
-    ]},
+  {lb:"Pull - Orqa + Bisep",dy:"Chorshanba",ex:[
+    {n:"Conventional Deadlift",s:4,r:"6-8",nt:"Asosiy kuch harakati"},
+    {n:"Lat Pulldown Wide Grip",s:4,r:"10",nt:""},
+    {n:"Seated Cable Row",s:3,r:"10-12",nt:""},
+    {n:"Face Pull (Cable)",s:3,r:"15",nt:"Yelka sog'lighi uchun majburiy"},
+    {n:"Barbell Curl",s:3,r:"10",nt:""},
+    {n:"Hammer Curl (DB)",s:3,r:"12",nt:""}
   ]},
-  7: { split:"Upper / Lower", theme:"Yangi split + rekordlar", done:false, days:[
-    { label:"Upper A — Ko'krak + Orqa", day:"Dushanba", ex:[
-      {n:"Flat Barbell Bench Press", s:5, r:"5", note:"5x5 protokol — og'ir"},
-      {n:"Weighted Pull-up", s:4, r:"6-8", note:"Belt bilan og'irlik qo'sh"},
-      {n:"Incline DB Press", s:3, r:"10", note:""},
-      {n:"Cable Row (Neutral Grip)", s:3, r:"10", note:""},
-      {n:"Lateral Raise (Cable)", s:3, r:"15", note:""},
-      {n:"Tricep + Bicep Superset", s:3, r:"12+12", note:"Pushdown + EZ Curl"},
-    ]},
-    { label:"Lower A — Squat fokus", day:"Chorshanba", ex:[
-      {n:"Barbell Back Squat", s:5, r:"5", note:"5x5 — maksimal kuch"},
-      {n:"Leg Press (4 pozitsiya)", s:4, r:"12", note:"Tor, keng, yuqori, past"},
-      {n:"Romanian Deadlift", s:3, r:"10", note:""},
-      {n:"Lying Leg Curl", s:4, r:"10-12", note:""},
-      {n:"Standing Calf Raise", s:5, r:"15", note:""},
-      {n:"Cable Crunch", s:3, r:"15", note:""},
-    ]},
-    { label:"Upper B — Yelka + Qo'l", day:"Juma", ex:[
-      {n:"Standing Barbell OHP", s:5, r:"5", note:"5x5 protokol"},
-      {n:"Bent-over Barbell Row", s:4, r:"6-8", note:""},
-      {n:"Seated DB Press", s:3, r:"10", note:""},
-      {n:"Single Arm Cable Row", s:3, r:"12 har qo'l", note:""},
-      {n:"Lateral + Rear Delt Raise", s:3, r:"15", note:"Superset"},
-      {n:"EZ Bar Curl", s:4, r:"10", note:""},
-      {n:"Skull Crusher", s:4, r:"10", note:""},
-    ]},
+  {lb:"Legs - Oyoq + Kor",dy:"Juma",ex:[
+    {n:"Barbell Back Squat",s:4,r:"8-10",nt:"Parallel yoki pastroq"},
+    {n:"Leg Press",s:3,r:"12-15",nt:""},
+    {n:"Romanian Deadlift",s:3,r:"10",nt:""},
+    {n:"Leg Curl (Machine)",s:3,r:"12",nt:""},
+    {n:"Leg Extension (Machine)",s:3,r:"15",nt:""},
+    {n:"Standing Calf Raise",s:4,r:"15",nt:""},
+    {n:"Plank + Leg Raise",s:3,r:"30sek+12",nt:"Superset"}
+  ]}
+]},
+4:{sp:"Push/Pull/Legs",th:"Og'irlik oshirish",done:false,days:[
+  {lb:"Push - Og'irlik +",dy:"Dushanba",ex:[
+    {n:"Flat Barbell Bench Press",s:4,r:"8",nt:"+2.5kg o'tgan haftaga"},
+    {n:"Decline DB Press",s:3,r:"10-12",nt:"Ko'krak pastki qismi"},
+    {n:"Pec Deck (Machine Fly)",s:3,r:"15",nt:"Pump uchun"},
+    {n:"Standing Barbell OHP",s:4,r:"8",nt:"Core ham ishlaydi"},
+    {n:"Lateral + Front Raise",s:3,r:"12",nt:"Superset"},
+    {n:"Tricep Dips (Machine)",s:3,r:"12",nt:""},
+    {n:"Tricep Pushdown (Bar)",s:3,r:"12",nt:""}
   ]},
-  8: { split:"Upper / Lower", theme:"Kuch rekordlari", done:false, days:[
-    { label:"Upper A — Hajm", day:"Dushanba", ex:[
-      {n:"Flat Barbell Bench Press", s:4, r:"6", note:"+5kg o'tgan haftaga"},
-      {n:"Weighted Pull-up", s:4, r:"6", note:"+og'irlik"},
-      {n:"Incline Barbell Press", s:3, r:"8", note:"Endi shtanga bilan"},
-      {n:"Chest Supported Row", s:3, r:"10", note:""},
-      {n:"Cable Fly + Face Pull", s:3, r:"12+15", note:"Superset"},
-      {n:"Dips (weighted)", s:3, r:"10", note:"Belt bilan og'irlik"},
-      {n:"Barbell Curl", s:3, r:"8", note:""},
-    ]},
-    { label:"Lower A — Deadlift fokus", day:"Chorshanba", ex:[
-      {n:"Conventional Deadlift", s:5, r:"5", note:"5x5 — asosiy kuch"},
-      {n:"Barbell Back Squat", s:3, r:"8", note:"Deadliftdan keyin"},
-      {n:"Hack Squat", s:3, r:"10", note:""},
-      {n:"Leg Curl (Machine)", s:4, r:"10", note:""},
-      {n:"Seated Calf Raise", s:5, r:"20", note:""},
-      {n:"Hanging Leg Raise", s:4, r:"15", note:""},
-    ]},
-    { label:"Upper B — Yelka kuni", day:"Juma", ex:[
-      {n:"Standing Barbell OHP", s:5, r:"5", note:"+2.5kg"},
-      {n:"Incline DB Row", s:4, r:"10", note:"Orqa yuqori qismi"},
-      {n:"Machine Shoulder Press", s:3, r:"12", note:"Pump"},
-      {n:"Lat Pulldown (Close Grip)", s:3, r:"12", note:""},
-      {n:"Cable Lateral Raise", s:4, r:"15", note:"Har qo'l alohida"},
-      {n:"Preacher Curl", s:4, r:"10", note:""},
-      {n:"Overhead Tricep Extension", s:4, r:"10", note:""},
-    ]},
+  {lb:"Pull - Hajm oshirish",dy:"Chorshanba",ex:[
+    {n:"Conventional Deadlift",s:4,r:"6",nt:"+5kg o'tgan haftaga"},
+    {n:"Pull-up (Assisted yoki BW)",s:4,r:"6-10",nt:""},
+    {n:"Cable Row (V-bar)",s:3,r:"10-12",nt:""},
+    {n:"Single Arm DB Row",s:3,r:"10 har qo'l",nt:"Full range of motion"},
+    {n:"Face Pull",s:3,r:"15",nt:""},
+    {n:"EZ Bar Curl",s:3,r:"10",nt:""},
+    {n:"Incline DB Curl",s:3,r:"12",nt:""}
   ]},
-  9: { split:"Upper / Lower", theme:"Yuqori intensivlik", done:false, days:[
-    { label:"Upper A — Og'ir kun", day:"Dushanba", ex:[
-      {n:"Flat Barbell Bench Press", s:4, r:"4-6", note:"Maksimal og'irlik"},
-      {n:"Weighted Pull-up", s:4, r:"5-6", note:""},
-      {n:"DB Fly + Push-up", s:3, r:"12+maks", note:"Drop set uslubi"},
-      {n:"Meadows Row", s:3, r:"10 har qo'l", note:"Orqa kengligi"},
-      {n:"Cable Crossover", s:3, r:"15", note:""},
-      {n:"Superset: Dips + Chin-up", s:3, r:"8+8", note:""},
-    ]},
-    { label:"Lower A — Quads fokus", day:"Chorshanba", ex:[
-      {n:"Barbell Back Squat", s:5, r:"4-6", note:"Rekord hafta"},
-      {n:"Leg Press (Tor oyoq)", s:4, r:"12", note:"Son oldi izolyatsiyasi"},
-      {n:"Leg Extension", s:4, r:"15", note:"Pump"},
-      {n:"Romanian Deadlift", s:4, r:"8", note:""},
-      {n:"Leg Curl", s:4, r:"12", note:""},
-      {n:"Calf Raise Superset", s:5, r:"15+20", note:"Standing + Seated"},
-      {n:"Ab Wheel", s:4, r:"10", note:""},
-    ]},
-    { label:"Upper B — Kuch + Pump", day:"Juma", ex:[
-      {n:"Seated Barbell OHP", s:4, r:"5", note:""},
-      {n:"T-Bar Row", s:4, r:"8", note:"Agar mavjud bo'lsa"},
-      {n:"Arnold Press", s:3, r:"10", note:""},
-      {n:"Wide Grip Lat Pulldown", s:3, r:"10", note:""},
-      {n:"Upright Row", s:3, r:"12", note:"Yelka-trapeziya"},
-      {n:"Incline DB Curl", s:4, r:"10", note:""},
-      {n:"Close Grip Bench Press", s:4, r:"10", note:"Trisep fokus"},
-    ]},
+  {lb:"Legs - Kuch oshirish",dy:"Juma",ex:[
+    {n:"Barbell Back Squat",s:5,r:"6-8",nt:"+2.5kg"},
+    {n:"Hack Squat (Machine)",s:3,r:"10",nt:"Son oldi fokus"},
+    {n:"Romanian Deadlift",s:4,r:"8-10",nt:""},
+    {n:"Lying Leg Curl",s:3,r:"12",nt:""},
+    {n:"Leg Extension",s:3,r:"15",nt:""},
+    {n:"Seated Calf Raise",s:4,r:"20",nt:"Sekin tushir"},
+    {n:"Cable Crunch",s:3,r:"15",nt:""}
+  ]}
+]},
+5:{sp:"Push/Pull/Legs",th:"Intensivlik oshirish",done:false,days:[
+  {lb:"Push - Superset kuni",dy:"Dushanba",ex:[
+    {n:"Flat Barbell Bench Press",s:5,r:"6-8",nt:"5 set, og'irroq"},
+    {n:"Incline DB Press + Pec Deck",s:3,r:"10+12",nt:"Superset"},
+    {n:"Seated Machine Press",s:3,r:"12",nt:"Pump"},
+    {n:"Lateral Raise (Cable)",s:4,r:"15",nt:""},
+    {n:"Skull Crusher (EZ Bar)",s:3,r:"10",nt:""},
+    {n:"Cable Pushdown + Overhead",s:3,r:"12+12",nt:"Superset"}
   ]},
-  10: { split:"Upper / Lower", theme:"Hajm + Kuch kombinatsiyasi", done:false, days:[
-    { label:"Upper A — Max Volume", day:"Dushanba", ex:[
-      {n:"Flat Barbell Bench Press", s:5, r:"6", note:""},
-      {n:"Barbell Row", s:5, r:"6", note:""},
-      {n:"Incline DB Press", s:4, r:"10", note:""},
-      {n:"Chest Supported Row", s:4, r:"10", note:""},
-      {n:"Cable Fly + Face Pull", s:3, r:"15+15", note:"Superset"},
-      {n:"Tricep Pushdown + Curl", s:4, r:"12+12", note:"Superset"},
-    ]},
-    { label:"Lower A — Hamstring fokus", day:"Chorshanba", ex:[
-      {n:"Conventional Deadlift", s:4, r:"4", note:"Og'ir"},
-      {n:"Romanian Deadlift", s:4, r:"8", note:""},
-      {n:"Leg Curl (Lying)", s:5, r:"10", note:"Hamstring asosiy"},
-      {n:"Barbell Squat", s:3, r:"10", note:"O'rtacha og'irlik"},
-      {n:"Leg Press", s:3, r:"15", note:""},
-      {n:"Calf Raise", s:5, r:"20", note:""},
-      {n:"Cable Crunch", s:4, r:"15", note:""},
-    ]},
-    { label:"Upper B — Yelka + Qo'l Max", day:"Juma", ex:[
-      {n:"Push Press (Barbell)", s:4, r:"6", note:"Portlovchi kuch"},
-      {n:"Weighted Pull-up", s:4, r:"6", note:""},
-      {n:"DB Lateral Raise", s:5, r:"15", note:""},
-      {n:"Rear Delt Fly (Machine)", s:4, r:"15", note:""},
-      {n:"Barbell Curl", s:4, r:"8", note:""},
-      {n:"Hammer Curl (Cable)", s:3, r:"12", note:""},
-      {n:"Skull Crusher + Pushdown", s:4, r:"10+10", note:"Superset"},
-    ]},
+  {lb:"Pull - Orqa pump",dy:"Chorshanba",ex:[
+    {n:"Deadlift",s:3,r:"5",nt:"Og'ir, sifatli"},
+    {n:"Weighted Pull-up",s:4,r:"6-8",nt:"Belt bilan og'irlik"},
+    {n:"Chest Supported Row (Machine)",s:4,r:"10",nt:"Orqa izolyatsiyasi"},
+    {n:"Straight Arm Pulldown",s:3,r:"15",nt:"Latissimus fokus"},
+    {n:"Face Pull",s:3,r:"15",nt:""},
+    {n:"Barbell + Hammer Curl",s:3,r:"10+10",nt:"Superset"},
+    {n:"Concentration Curl",s:3,r:"12",nt:""}
   ]},
-  11: { split:"Upper / Lower", theme:"Pik hafta — Maksimal kuch", done:false, days:[
-    { label:"Upper A — 1RM sinash", day:"Dushanba", ex:[
-      {n:"Flat Barbell Bench Press", s:5, r:"5-4-3-2-1", note:"1RM ga yaqinlash"},
-      {n:"Weighted Pull-up", s:4, r:"5-4-3-3", note:"Maksimal og'irlik"},
-      {n:"Incline DB Press", s:3, r:"10", note:"Qo'shimcha hajm"},
-      {n:"Cable Row", s:3, r:"10", note:""},
-      {n:"Facepull + Lateral Raise", s:3, r:"20+15", note:"Superset"},
-      {n:"Tricep + Bicep izolyatsiya", s:3, r:"12", note:""},
-    ]},
-    { label:"Lower A — Squat 1RM", day:"Chorshanba", ex:[
-      {n:"Barbell Back Squat", s:6, r:"5-4-3-2-1-1", note:"Rekord sinash"},
-      {n:"Leg Press", s:3, r:"15", note:"Tiklash uchun"},
-      {n:"Romanian Deadlift", s:3, r:"10", note:""},
-      {n:"Leg Curl", s:4, r:"10", note:""},
-      {n:"Calf Raise", s:5, r:"20", note:""},
-      {n:"Plank", s:3, r:"60 sek", note:""},
-    ]},
-    { label:"Upper B — OHP + DL Rekord", day:"Juma", ex:[
-      {n:"Standing Barbell OHP", s:5, r:"5-4-3-2-1", note:"1RM sinash"},
-      {n:"Conventional Deadlift", s:5, r:"5-4-3-2-1", note:"Rekord"},
-      {n:"DB Shoulder Press", s:3, r:"10", note:""},
-      {n:"Barbell Row", s:3, r:"8", note:""},
-      {n:"Curl + Tricep", s:3, r:"10+10", note:"Superset"},
-    ]},
+  {lb:"Legs - Yuqori hajm",dy:"Juma",ex:[
+    {n:"Barbell Back Squat",s:4,r:"8",nt:""},
+    {n:"Front Squat yoki Goblet Squat",s:3,r:"10",nt:"Son oldi va core"},
+    {n:"Leg Press (Keng oyoq)",s:4,r:"15",nt:"Yon son uchun"},
+    {n:"Stiff-Leg Deadlift",s:3,r:"10",nt:""},
+    {n:"Leg Curl + Leg Extension",s:4,r:"12+12",nt:"Superset"},
+    {n:"Standing + Seated Calf Raise",s:4,r:"15+20",nt:"Superset"},
+    {n:"Ab Circuit",s:3,r:"15",nt:"Crunch + Twist + Plank"}
+  ]}
+]},
+6:{sp:"Push/Pull/Legs",th:"Deload hafta - tiklash",done:false,days:[
+  {lb:"Push - Engil (Deload)",dy:"Dushanba",ex:[
+    {n:"Flat Barbell Bench Press",s:3,r:"10",nt:"50-60% og'irlikda"},
+    {n:"DB Shoulder Press",s:3,r:"12",nt:"Engil"},
+    {n:"Cable Fly",s:3,r:"15",nt:""},
+    {n:"Lateral Raise",s:3,r:"15",nt:""},
+    {n:"Tricep Pushdown",s:3,r:"15",nt:""}
   ]},
-  12: { split:"Upper / Lower", theme:"Final hafta + Baholash", done:false, days:[
-    { label:"Upper — Final", day:"Dushanba", ex:[
-      {n:"Flat Barbell Bench Press", s:4, r:"6-8", note:"1-oyga nisbatan solishtir"},
-      {n:"Weighted Pull-up", s:4, r:"6-8", note:""},
-      {n:"Incline DB Press", s:3, r:"10", note:""},
-      {n:"Barbell Row", s:3, r:"10", note:""},
-      {n:"OHP", s:3, r:"8", note:""},
-      {n:"Bicep + Tricep Circuit", s:3, r:"12", note:"Pump va zavq"},
-    ]},
-    { label:"Lower — Final", day:"Chorshanba", ex:[
-      {n:"Barbell Back Squat", s:4, r:"6", note:"Rekord tekshiruvi"},
-      {n:"Conventional Deadlift", s:4, r:"5", note:""},
-      {n:"Leg Press", s:3, r:"15", note:""},
-      {n:"Leg Curl + Leg Extension", s:3, r:"12+12", note:"Superset"},
-      {n:"Calf Raise", s:5, r:"20", note:""},
-      {n:"Ab Circuit", s:4, r:"15", note:"Barcha ab mashqlari"},
-    ]},
-    { label:"Full Body — Xayrlashuv", day:"Juma", ex:[
-      {n:"Squat", s:3, r:"10", note:"1-kun bilan solishtir"},
-      {n:"Bench Press", s:3, r:"10", note:""},
-      {n:"Deadlift", s:3, r:"8", note:""},
-      {n:"OHP", s:3, r:"10", note:""},
-      {n:"Pull-up", s:3, r:"maks", note:""},
-      {n:"Sevimli 2 ta mashq", s:3, r:"12", note:""},
-    ]},
+  {lb:"Pull - Engil (Deload)",dy:"Chorshanba",ex:[
+    {n:"Romanian Deadlift",s:3,r:"10",nt:"Deadlift emas, engil variant"},
+    {n:"Lat Pulldown",s:3,r:"12",nt:""},
+    {n:"Cable Row",s:3,r:"12",nt:""},
+    {n:"Face Pull",s:3,r:"20",nt:""},
+    {n:"DB Curl",s:3,r:"15",nt:""}
   ]},
+  {lb:"Legs - Engil (Deload)",dy:"Juma",ex:[
+    {n:"Leg Press",s:3,r:"15",nt:"Squat o'rniga"},
+    {n:"Walking Lunges",s:3,r:"12",nt:""},
+    {n:"Leg Curl",s:3,r:"15",nt:""},
+    {n:"Leg Extension",s:3,r:"15",nt:""},
+    {n:"Calf Raise",s:3,r:"20",nt:""},
+    {n:"Plank",s:3,r:"45 sek",nt:""}
+  ]}
+]},
+7:{sp:"Upper/Lower",th:"Yangi split + rekordlar",done:false,days:[
+  {lb:"Upper A - Ko'krak + Orqa",dy:"Dushanba",ex:[
+    {n:"Flat Barbell Bench Press",s:5,r:"5",nt:"5x5 protokol - og'ir"},
+    {n:"Weighted Pull-up",s:4,r:"6-8",nt:"Belt bilan og'irlik"},
+    {n:"Incline DB Press",s:3,r:"10",nt:""},
+    {n:"Cable Row (Neutral Grip)",s:3,r:"10",nt:""},
+    {n:"Lateral Raise (Cable)",s:3,r:"15",nt:""},
+    {n:"Tricep + Bicep Superset",s:3,r:"12+12",nt:"Pushdown + EZ Curl"}
+  ]},
+  {lb:"Lower A - Squat fokus",dy:"Chorshanba",ex:[
+    {n:"Barbell Back Squat",s:5,r:"5",nt:"5x5 - maksimal kuch"},
+    {n:"Leg Press (4 pozitsiya)",s:4,r:"12",nt:"Tor, keng, yuqori, past"},
+    {n:"Romanian Deadlift",s:3,r:"10",nt:""},
+    {n:"Lying Leg Curl",s:4,r:"10-12",nt:""},
+    {n:"Standing Calf Raise",s:5,r:"15",nt:""},
+    {n:"Cable Crunch",s:3,r:"15",nt:""}
+  ]},
+  {lb:"Upper B - Yelka + Qo'l",dy:"Juma",ex:[
+    {n:"Standing Barbell OHP",s:5,r:"5",nt:"5x5 protokol"},
+    {n:"Bent-over Barbell Row",s:4,r:"6-8",nt:""},
+    {n:"Seated DB Press",s:3,r:"10",nt:""},
+    {n:"Single Arm Cable Row",s:3,r:"12 har qo'l",nt:""},
+    {n:"Lateral + Rear Delt Raise",s:3,r:"15",nt:"Superset"},
+    {n:"EZ Bar Curl",s:4,r:"10",nt:""},
+    {n:"Skull Crusher",s:4,r:"10",nt:""}
+  ]}
+]},
+8:{sp:"Upper/Lower",th:"Kuch rekordlari",done:false,days:[
+  {lb:"Upper A - Hajm",dy:"Dushanba",ex:[
+    {n:"Flat Barbell Bench Press",s:4,r:"6",nt:"+5kg o'tgan haftaga"},
+    {n:"Weighted Pull-up",s:4,r:"6",nt:"+og'irlik"},
+    {n:"Incline Barbell Press",s:3,r:"8",nt:"Endi shtanga bilan"},
+    {n:"Chest Supported Row",s:3,r:"10",nt:""},
+    {n:"Cable Fly + Face Pull",s:3,r:"12+15",nt:"Superset"},
+    {n:"Dips (weighted)",s:3,r:"10",nt:"Belt bilan og'irlik"},
+    {n:"Barbell Curl",s:3,r:"8",nt:""}
+  ]},
+  {lb:"Lower A - Deadlift fokus",dy:"Chorshanba",ex:[
+    {n:"Conventional Deadlift",s:5,r:"5",nt:"5x5 - asosiy kuch"},
+    {n:"Barbell Back Squat",s:3,r:"8",nt:"Deadliftdan keyin"},
+    {n:"Hack Squat",s:3,r:"10",nt:""},
+    {n:"Leg Curl (Machine)",s:4,r:"10",nt:""},
+    {n:"Seated Calf Raise",s:5,r:"20",nt:""},
+    {n:"Hanging Leg Raise",s:4,r:"15",nt:""}
+  ]},
+  {lb:"Upper B - Yelka kuni",dy:"Juma",ex:[
+    {n:"Standing Barbell OHP",s:5,r:"5",nt:"+2.5kg"},
+    {n:"Incline DB Row",s:4,r:"10",nt:"Orqa yuqori qismi"},
+    {n:"Machine Shoulder Press",s:3,r:"12",nt:"Pump"},
+    {n:"Lat Pulldown Close Grip",s:3,r:"12",nt:""},
+    {n:"Cable Lateral Raise",s:4,r:"15",nt:"Har qo'l alohida"},
+    {n:"Preacher Curl",s:4,r:"10",nt:""},
+    {n:"Overhead Tricep Extension",s:4,r:"10",nt:""}
+  ]}
+]},
+9:{sp:"Upper/Lower",th:"Yuqori intensivlik",done:false,days:[
+  {lb:"Upper A - Og'ir kun",dy:"Dushanba",ex:[
+    {n:"Flat Barbell Bench Press",s:4,r:"4-6",nt:"Maksimal og'irlik"},
+    {n:"Weighted Pull-up",s:4,r:"5-6",nt:""},
+    {n:"DB Fly + Push-up",s:3,r:"12+maks",nt:"Drop set uslubi"},
+    {n:"Meadows Row",s:3,r:"10 har qo'l",nt:""},
+    {n:"Cable Crossover",s:3,r:"15",nt:""},
+    {n:"Dips + Chin-up",s:3,r:"8+8",nt:"Superset"}
+  ]},
+  {lb:"Lower A - Quads fokus",dy:"Chorshanba",ex:[
+    {n:"Barbell Back Squat",s:5,r:"4-6",nt:"Rekord hafta"},
+    {n:"Leg Press (Tor oyoq)",s:4,r:"12",nt:"Son oldi izolyatsiyasi"},
+    {n:"Leg Extension",s:4,r:"15",nt:"Pump"},
+    {n:"Romanian Deadlift",s:4,r:"8",nt:""},
+    {n:"Leg Curl",s:4,r:"12",nt:""},
+    {n:"Calf Raise Superset",s:5,r:"15+20",nt:"Standing + Seated"},
+    {n:"Ab Wheel",s:4,r:"10",nt:""}
+  ]},
+  {lb:"Upper B - Kuch + Pump",dy:"Juma",ex:[
+    {n:"Seated Barbell OHP",s:4,r:"5",nt:""},
+    {n:"T-Bar Row",s:4,r:"8",nt:""},
+    {n:"Arnold Press",s:3,r:"10",nt:""},
+    {n:"Wide Grip Lat Pulldown",s:3,r:"10",nt:""},
+    {n:"Upright Row",s:3,r:"12",nt:"Yelka-trapeziya"},
+    {n:"Incline DB Curl",s:4,r:"10",nt:""},
+    {n:"Close Grip Bench Press",s:4,r:"10",nt:"Trisep fokus"}
+  ]}
+]},
+10:{sp:"Upper/Lower",th:"Hajm + Kuch kombinatsiyasi",done:false,days:[
+  {lb:"Upper A - Max Volume",dy:"Dushanba",ex:[
+    {n:"Flat Barbell Bench Press",s:5,r:"6",nt:""},
+    {n:"Barbell Row",s:5,r:"6",nt:""},
+    {n:"Incline DB Press",s:4,r:"10",nt:""},
+    {n:"Chest Supported Row",s:4,r:"10",nt:""},
+    {n:"Cable Fly + Face Pull",s:3,r:"15+15",nt:"Superset"},
+    {n:"Tricep Pushdown + Curl",s:4,r:"12+12",nt:"Superset"}
+  ]},
+  {lb:"Lower A - Hamstring fokus",dy:"Chorshanba",ex:[
+    {n:"Conventional Deadlift",s:4,r:"4",nt:"Og'ir"},
+    {n:"Romanian Deadlift",s:4,r:"8",nt:""},
+    {n:"Leg Curl (Lying)",s:5,r:"10",nt:"Hamstring asosiy"},
+    {n:"Barbell Squat",s:3,r:"10",nt:"O'rtacha og'irlik"},
+    {n:"Leg Press",s:3,r:"15",nt:""},
+    {n:"Calf Raise",s:5,r:"20",nt:""},
+    {n:"Cable Crunch",s:4,r:"15",nt:""}
+  ]},
+  {lb:"Upper B - Yelka Max",dy:"Juma",ex:[
+    {n:"Push Press (Barbell)",s:4,r:"6",nt:"Portlovchi kuch"},
+    {n:"Weighted Pull-up",s:4,r:"6",nt:""},
+    {n:"DB Lateral Raise",s:5,r:"15",nt:""},
+    {n:"Rear Delt Fly (Machine)",s:4,r:"15",nt:""},
+    {n:"Barbell Curl",s:4,r:"8",nt:""},
+    {n:"Hammer Curl (Cable)",s:3,r:"12",nt:""},
+    {n:"Skull Crusher + Pushdown",s:4,r:"10+10",nt:"Superset"}
+  ]}
+]},
+11:{sp:"Upper/Lower",th:"Pik hafta - Maksimal kuch",done:false,days:[
+  {lb:"Upper A - 1RM sinash",dy:"Dushanba",ex:[
+    {n:"Flat Barbell Bench Press",s:5,r:"5-4-3-2-1",nt:"1RM ga yaqinlash"},
+    {n:"Weighted Pull-up",s:4,r:"5-4-3-3",nt:"Maksimal og'irlik"},
+    {n:"Incline DB Press",s:3,r:"10",nt:""},
+    {n:"Cable Row",s:3,r:"10",nt:""},
+    {n:"Facepull + Lateral Raise",s:3,r:"20+15",nt:"Superset"},
+    {n:"Tricep + Bicep izolyatsiya",s:3,r:"12",nt:""}
+  ]},
+  {lb:"Lower A - Squat 1RM",dy:"Chorshanba",ex:[
+    {n:"Barbell Back Squat",s:6,r:"5-4-3-2-1-1",nt:"Rekord sinash"},
+    {n:"Leg Press",s:3,r:"15",nt:"Tiklash uchun"},
+    {n:"Romanian Deadlift",s:3,r:"10",nt:""},
+    {n:"Leg Curl",s:4,r:"10",nt:""},
+    {n:"Calf Raise",s:5,r:"20",nt:""},
+    {n:"Plank",s:3,r:"60 sek",nt:""}
+  ]},
+  {lb:"Upper B - OHP + DL Rekord",dy:"Juma",ex:[
+    {n:"Standing Barbell OHP",s:5,r:"5-4-3-2-1",nt:"1RM sinash"},
+    {n:"Conventional Deadlift",s:5,r:"5-4-3-2-1",nt:"Rekord"},
+    {n:"DB Shoulder Press",s:3,r:"10",nt:""},
+    {n:"Barbell Row",s:3,r:"8",nt:""},
+    {n:"Curl + Tricep Superset",s:3,r:"10+10",nt:""}
+  ]}
+]},
+12:{sp:"Upper/Lower",th:"Final hafta",done:false,days:[
+  {lb:"Upper - Final",dy:"Dushanba",ex:[
+    {n:"Flat Barbell Bench Press",s:4,r:"6-8",nt:"1-oyga nisbatan solishtir"},
+    {n:"Weighted Pull-up",s:4,r:"6-8",nt:""},
+    {n:"Incline DB Press",s:3,r:"10",nt:""},
+    {n:"Barbell Row",s:3,r:"10",nt:""},
+    {n:"OHP",s:3,r:"8",nt:""},
+    {n:"Bicep + Tricep Circuit",s:3,r:"12",nt:"Pump va zavq"}
+  ]},
+  {lb:"Lower - Final",dy:"Chorshanba",ex:[
+    {n:"Barbell Back Squat",s:4,r:"6",nt:"Rekord tekshiruvi"},
+    {n:"Conventional Deadlift",s:4,r:"5",nt:""},
+    {n:"Leg Press",s:3,r:"15",nt:""},
+    {n:"Leg Curl + Leg Extension",s:3,r:"12+12",nt:"Superset"},
+    {n:"Calf Raise",s:5,r:"20",nt:""},
+    {n:"Ab Circuit",s:4,r:"15",nt:"Barcha ab mashqlari"}
+  ]},
+  {lb:"Full Body - Xayrlashuv",dy:"Juma",ex:[
+    {n:"Squat",s:3,r:"10",nt:"1-kun bilan solishtir"},
+    {n:"Bench Press",s:3,r:"10",nt:""},
+    {n:"Deadlift",s:3,r:"8",nt:""},
+    {n:"OHP",s:3,r:"10",nt:""},
+    {n:"Pull-up",s:3,r:"maks",nt:""},
+    {n:"Sevimli 2 ta mashq",s:3,r:"12",nt:""}
+  ]}
+]}
 };
 
-const nutrition = {
-  1: { cal:"2800–3000", pro:"140–160g", carb:"350–380g", fat:"70–80g", meals:[
-    {t:"07:00", n:"Nonushta", i:["4 ta tuxum (qaynatilgan/qovurilgan)","2 bo'lak bug'doy noni","1 banan","1 stakan sut yoki kefir"]},
-    {t:"10:00", n:"Snack", i:["Bir hovuch yong'oq (20-30g)","1 olma yoki nok"]},
-    {t:"13:00", n:"Tushlik", i:["150-200g tovuq ko'kragi","200g guruch yoki makaron","Sabzavotlar salati (zaytun moyi)"]},
-    {t:"16:00", n:"Pre-workout", i:["2 ta tuxum","1 bo'lak non","Banan yoki xurmo (5 ta)"]},
-    {t:"19:00", n:"Post-workout", i:["200g mol/qo'y/tovuq go'shti","200g kartoshka yoki guruch","Ko'katlar"]},
-    {t:"21:30", n:"Kech snack", i:["200g tvorog","Asal (1 choy qoshiq)"]},
-  ]},
-  2: { cal:"3000–3200", pro:"160–180g", carb:"380–400g", fat:"80–90g", meals:[
-    {t:"07:00", n:"Nonushta", i:["5 ta tuxum","Suli bo'tqasi 100g + meva","1 stakan sut","Peanut butter 1 qoshiq"]},
-    {t:"10:00", n:"Snack", i:["Tvorog 150g + asal","Yong'oq 30g","Meva"]},
-    {t:"13:00", n:"Tushlik", i:["200g tovuq yoki baliq","250g guruch","1 avokado","Salat"]},
-    {t:"15:30", n:"Pre-workout", i:["2 ta tuxum","50g quruq meva","Qora qahva"]},
-    {t:"18:30", n:"Post-workout", i:["250g go'sht","250g guruch/makaron","Sabzavotlar","Zaytun moyi"]},
-    {t:"21:30", n:"Kech snack", i:["250g tvorog","Yoki 2 ta tuxum + pishloq"]},
-  ]},
-  3: { cal:"3200–3500", pro:"180–200g", carb:"400–430g", fat:"90–100g", meals:[
-    {t:"07:00", n:"Nonushta (Katta)", i:["6 ta tuxum","Suli bo'tqasi 120g + yong'oq + meva","1 stakan sut","Multigrain non 2 bo'lak"]},
-    {t:"10:00", n:"Snack", i:["4 ta tuxum + non","Protein shake (ixtiyoriy)","Meva"]},
-    {t:"13:00", n:"Tushlik (To'yimli)", i:["250g go'sht","300g guruch/makaron","Avokado + zaytun moyi","Ko'katli salat"]},
-    {t:"16:00", n:"Pre-workout (Kuchli)", i:["3 ta tuxum","2 banan","6-7 ta xurmo","Qora qahva"]},
-    {t:"19:00", n:"Post-workout (Eng muhim)", i:["300g go'sht yoki baliq","300g guruch","Sabzavotlar","2 choy qoshiq zaytun moyi"]},
-    {t:"22:00", n:"Kech snack", i:["300g tvorog + asal + yong'oq","Yoki issiq sut + suli"]},
-  ]},
+var NUT = {
+1:{cal:"2800-3000 kcal",pro:"140-160g",carb:"350-380g",fat:"70-80g",meals:[
+  {t:"07:00",n:"Nonushta",i:["4 ta tuxum (qaynatilgan/qovurilgan)","2 bo'lak bug'doy noni","1 banan","1 stakan sut yoki kefir"]},
+  {t:"10:00",n:"Snack",i:["Bir hovuch yong'oq (20-30g)","1 olma yoki nok"]},
+  {t:"13:00",n:"Tushlik",i:["150-200g tovuq ko'kragi","200g guruch yoki makaron","Sabzavotlar salati (zaytun moyi)"]},
+  {t:"16:00",n:"Pre-workout",i:["2 ta tuxum","1 bo'lak non","Banan yoki 5 ta xurmo"]},
+  {t:"19:00",n:"Post-workout",i:["200g mol/qo'y/tovuq go'shti","200g kartoshka yoki guruch","Ko'katlar"]},
+  {t:"21:30",n:"Kech snack",i:["200g tvorog","1 choy qoshiq asal"]}
+]},
+2:{cal:"3000-3200 kcal",pro:"160-180g",carb:"380-400g",fat:"80-90g",meals:[
+  {t:"07:00",n:"Nonushta",i:["5 ta tuxum","Suli bo'tqasi 100g + meva","1 stakan sut","Peanut butter 1 qoshiq"]},
+  {t:"10:00",n:"Snack",i:["Tvorog 150g + asal","Yong'oq 30g","Meva"]},
+  {t:"13:00",n:"Tushlik",i:["200g tovuq yoki baliq","250g guruch","1 avokado","Salat"]},
+  {t:"15:30",n:"Pre-workout",i:["2 ta tuxum","50g quruq meva","Qora qahva"]},
+  {t:"18:30",n:"Post-workout",i:["250g go'sht","250g guruch/makaron","Sabzavotlar","Zaytun moyi"]},
+  {t:"21:30",n:"Kech snack",i:["250g tvorog","Yoki 2 ta tuxum + pishloq"]}
+]},
+3:{cal:"3200-3500 kcal",pro:"180-200g",carb:"400-430g",fat:"90-100g",meals:[
+  {t:"07:00",n:"Nonushta (Katta)",i:["6 ta tuxum","Suli bo'tqasi 120g + yong'oq + meva","1 stakan sut","Multigrain non 2 bo'lak"]},
+  {t:"10:00",n:"Snack",i:["4 ta tuxum + non","Protein shake (ixtiyoriy)","Meva"]},
+  {t:"13:00",n:"Tushlik (To'yimli)",i:["250g go'sht","300g guruch/makaron","Avokado + zaytun moyi","Ko'katli salat"]},
+  {t:"16:00",n:"Pre-workout (Kuchli)",i:["3 ta tuxum","2 banan","6-7 ta xurmo","Qora qahva"]},
+  {t:"19:00",n:"Post-workout",i:["300g go'sht yoki baliq","300g guruch","Sabzavotlar","2 choy qoshiq zaytun moyi"]},
+  {t:"22:00",n:"Kech snack",i:["300g tvorog + asal + yong'oq","Yoki issiq sut + suli"]}
+]}
 };
 
-// ─── STATE ───────────────────────────────────────────────────────────────────
-let currentWeek = 3;
-let openCard = null;
-let openMeal = null;
-let completedWorkouts = JSON.parse(localStorage.getItem('cw') || '{}');
+function mo(w){ return w<=4?1:w<=8?2:3; }
 
-// ─── UTILS ───────────────────────────────────────────────────────────────────
-function monthOf(w) { return w <= 4 ? 1 : w <= 8 ? 2 : 3; }
-function totalDone() { return Object.keys(completedWorkouts).filter(k=>completedWorkouts[k]).length; }
-
-// ─── RENDER ──────────────────────────────────────────────────────────────────
-function renderMashq() {
-  const w = weeks[currentWeek];
-  const done = w.done;
-  let html = '';
-
-  // iOS banner
-  if (!localStorage.getItem('bannerDismissed')) {
-    html += `<div class="add-banner" id="addBanner">
-      <span style="font-size:24px">📱</span>
-      <div class="add-banner-text">
-        <div class="add-banner-title">Ekranga qo'shing!</div>
-        <div class="add-banner-desc">Safari → <strong style="color:var(--gold)">⬆ Share</strong> → <strong style="color:var(--gold)">Add to Home Screen</strong> — ilova kabi ishlaydi</div>
-      </div>
-      <button class="close-btn" onclick="dismissBanner()">×</button>
-    </div>`;
-  }
-
-  // Week selector
-  html += `<div class="sec-title">Hafta tanlang</div>
-  <div class="week-grid">`;
-  for (let i=1; i<=12; i++) {
-    const wd = weeks[i];
-    const cls = i === currentWeek ? 'active' : wd.done ? 'done' : '';
-    html += `<button class="week-btn ${cls}" onclick="selectWeek(${i})">${i}</button>`;
-  }
-  html += `</div>`;
-
-  // Month indicator
-  const m = monthOf(currentWeek);
-  const mColors = {1:'#4a7acc', 2:'#4aaa78', 3:'#c9a84c'};
-  const mc = mColors[m];
-  html += `<div style="display:flex;gap:8px;margin-bottom:14px">`;
-  [1,2,3].forEach(mn => {
-    const active = mn === m;
-    html += `<div style="flex:1;padding:7px;border-radius:10px;background:${active?mc+'18':'var(--bg2)'};border:1px solid ${active?mc:'#2a2a4e'};text-align:center">
-      <div style="font-size:11px;font-weight:700;color:${active?mc:'#445566'}">${mn}-OY</div>
-      <div style="font-size:9px;color:#445566">${mn*4-3}-${mn*4}-hafta</div>
-    </div>`;
-  });
-  html += `</div>`;
-
-  // Week info
-  html += `<div style="padding:12px 16px;background:var(--bg2);border-radius:12px;border-left:3px solid ${done?'#4aaa78':'var(--gold)'};margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
-    <div>
-      <div style="font-size:10px;color:var(--text-dim);letter-spacing:1px">${w.split}</div>
-      <div style="font-size:15px;font-weight:700;margin-top:2px">${w.theme}</div>
-    </div>
-    ${done ? '<div style="background:#1a3a1a;border:1px solid #3a6a3a;border-radius:8px;padding:4px 10px;color:#4aaa78;font-size:11px">✓ Bajarildi</div>' : ''}
-  </div>`;
-
-  // Days
-  w.days.forEach((day, idx) => {
-    const cardId = `day-${idx}`;
-    const isOpen = openCard === cardId;
-    html += `<div class="card">
-      <div class="card-header" onclick="toggleCard('${cardId}')">
-        <div>
-          <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
-            <span class="day-pill">${day.day.toUpperCase()}</span>
-            <span style="color:#445566;font-size:11px">${day.ex.length} mashq</span>
-          </div>
-          <div style="font-size:14px;font-weight:700">${day.label}</div>
-        </div>
-        <span class="chev ${isOpen?'open'}">▾</span>
-      </div>
-      <div class="card-body ${isOpen?'open'}">
-        <div style="height:8px"></div>`;
-    day.ex.forEach((ex, ei) => {
-      html += `<div class="ex-row">
-        <div style="flex:1">
-          <div class="ex-name">${ex.n}</div>
-          ${ex.note ? `<div class="ex-note">↳ ${ex.note}</div>` : ''}
-        </div>
-        <div class="ex-sets">${ex.s}×${ex.r}</div>
-      </div>`;
-    });
-    html += `</div></div>`;
-  });
-
-  document.getElementById('screen-mashq').innerHTML = html;
-  document.getElementById('currentWeekBadge').textContent = `${currentWeek}-HAFTA`;
+function go(tab, btn){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('s-'+tab).classList.add('on');
+  btn.classList.add('on');
+  OC=null; OM=null;
+  if(tab==='mashq') rMashq();
+  else if(tab==='ovqat') rOvqat();
+  else if(tab==='progress') rProgress();
+  else rInfo();
 }
 
-function renderOvqat() {
-  const m = monthOf(currentWeek);
-  const n = nutrition[m];
-  let html = '';
-
-  // Month tabs
-  html += `<div class="month-tabs">`;
-  [1,2,3].forEach(mn => {
-    html += `<button class="month-tab ${m===mn?'active':''}" onclick="selectMonth(${mn})">${mn}-OY</button>`;
+function rMashq(){
+  var w=W[CW]; var html='';
+  // week grid
+  html+='<div class="st">Hafta tanlang</div><div class="wgrid">';
+  for(var i=1;i<=12;i++){
+    var c=i===CW?'cur':W[i].done?'done':'';
+    html+='<button class="wb '+c+'" onclick="selW('+i+')">'+i+'</button>';
+  }
+  html+='</div>';
+  // month row
+  var m=mo(CW); var mc={1:'#4a7acc',2:'#4aaa78',3:'#c9a84c'};
+  html+='<div style="display:flex;gap:7px;margin-bottom:13px">';
+  [1,2,3].forEach(function(mn){
+    var a=mn===m; var c=mc[mn];
+    html+='<div style="flex:1;padding:7px;border-radius:10px;background:'+(a?c+'18':'var(--bg2)')+';border:1px solid '+(a?c:'#2a2a4e')+';text-align:center"><div style="font-size:11px;font-weight:700;color:'+(a?c:'#445566')+'">'+mn+'-OY</div><div style="font-size:9px;color:#445566">'+(mn*4-3)+'-'+(mn*4)+' hafta</div></div>';
   });
-  html += `</div>`;
-
-  // Macros
-  html += `<div class="macro-grid">
-    <div class="macro-card" style="border:1px solid #e86c4a33"><div class="macro-label">🔥 Kaloriya</div><div class="macro-val" style="color:#e86c4a">${n.cal} kcal</div></div>
-    <div class="macro-card" style="border:1px solid #4aaa7833"><div class="macro-label">🥩 Oqsil</div><div class="macro-val" style="color:#4aaa78">${n.pro}</div></div>
-    <div class="macro-card" style="border:1px solid #4a88cc33"><div class="macro-label">🍚 Uglevodlar</div><div class="macro-val" style="color:#4a88cc">${n.carb}</div></div>
-    <div class="macro-card" style="border:1px solid var(--gold)33"><div class="macro-label">🥑 Yog'</div><div class="macro-val" style="color:var(--gold)">${n.fat}</div></div>
-  </div>`;
-
-  // Meals
-  n.meals.forEach((meal, i) => {
-    const isOpen = openMeal === i;
-    html += `<div class="card">
-      <div class="card-header" onclick="toggleMeal(${i})">
-        <div>
-          <div class="meal-time">${meal.t}</div>
-          <div class="meal-name">${meal.n}</div>
-        </div>
-        <span class="chev ${isOpen?'open'}">▾</span>
-      </div>
-      <div class="card-body ${isOpen?'open'}">
-        <div style="height:6px"></div>`;
-    meal.i.forEach(item => {
-      html += `<div class="meal-item"><span class="meal-dot">✦</span>${item}</div>`;
+  html+='</div>';
+  // week info
+  html+='<div style="padding:12px 15px;background:var(--bg2);border-radius:12px;border-left:3px solid '+(w.done?'#4aaa78':'var(--gold)')+';margin-bottom:13px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:10px;color:var(--dim)">'+w.sp+'</div><div style="font-size:15px;font-weight:700;margin-top:2px">'+w.th+'</div></div>'+(w.done?'<div style="background:#1a3a1a;border:1px solid #3a6a3a;border-radius:8px;padding:4px 10px;color:#4aaa78;font-size:11px">Bajarildi</div>':'')+'</div>';
+  // days
+  w.days.forEach(function(day,idx){
+    var id='d'+idx; var op=OC===id;
+    html+='<div class="card"><div class="ch" onclick="tC(\''+id+'\')"><div><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="dp">'+day.dy.toUpperCase()+'</span><span style="color:#445566;font-size:11px">'+day.ex.length+' mashq</span></div><div style="font-size:13px;font-weight:700">'+day.lb+'</div></div><span class="chev'+(op?' on':'')+'">&#9662;</span></div><div class="cb'+(op?' on':'')+'"><div style="height:7px"></div>';
+    day.ex.forEach(function(ex){
+      html+='<div class="ex"><div style="flex:1"><div class="en">'+ex.n+'</div>'+(ex.nt?'<div class="enote">'+ex.nt+'</div>':'')+'</div><div class="es">'+ex.s+'x'+ex.r+'</div></div>';
     });
-    html += `</div></div>`;
+    html+='</div></div>';
   });
-
-  document.getElementById('screen-ovqat').innerHTML = html;
+  document.getElementById('s-mashq').innerHTML=html;
+  document.getElementById('wbadge').textContent=CW+'-HAFTA';
 }
 
-function renderProgress() {
-  const total = 36; // 12 weeks × 3 days
-  const done = totalDone();
-  const pct = Math.round((done / total) * 100);
-  const r = 68, circ = 2 * Math.PI * r;
-  const dash = circ * (done / total);
+function rOvqat(){
+  var m=mo(CW); var n=NUT[m]; var html='';
+  html+='<div style="display:flex;gap:7px;margin-bottom:13px">';
+  [1,2,3].forEach(function(mn){
+    html+='<button style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid '+(m===mn?'var(--gold)':'#2a2a4e')+';background:'+(m===mn?'var(--gold)':'var(--bg2)')+';color:'+(m===mn?'#090910':'var(--dim)')+';font-size:11px;font-weight:700;cursor:pointer" onclick="selM('+mn+')">'+mn+'-OY</button>';
+  });
+  html+='</div>';
+  html+='<div class="mgrid">';
+  [[n.cal,'#e86c4a','Kaloriya'],
+   [n.pro,'#4aaa78','Oqsil'],
+   [n.carb,'#4a88cc','Uglevodlar'],
+   [n.fat,'var(--gold)','Yog\'']].forEach(function(x){
+    html+='<div class="mc" style="border:1px solid '+x[1]+'33"><div class="ml">'+x[2]+'</div><div class="mv" style="color:'+x[1]+'">'+x[0]+'</div></div>';
+  });
+  html+='</div>';
+  n.meals.forEach(function(meal,i){
+    var op=OM===i;
+    html+='<div class="card"><div class="ch" onclick="tM('+i+')"><div><div style="color:var(--gold);font-size:11px">'+meal.t+'</div><div style="font-size:14px;font-weight:700;margin-top:2px">'+meal.n+'</div></div><span class="chev'+(op?' on':'')+'">&#9662;</span></div><div class="cb'+(op?' on':'')+'"><div style="height:6px"></div>';
+    meal.i.forEach(function(item){
+      html+='<div class="mi"><span class="dot">&#10022;</span>'+item+'</div>';
+    });
+    html+='</div></div>';
+  });
+  document.getElementById('s-ovqat').innerHTML=html;
+}
 
-  let html = `
-  <div class="sec-title">Umumiy progress</div>
-  <div class="progress-ring">
-    <div class="ring-wrap">
-      <svg width="160" height="160" viewBox="0 0 160 160">
-        <circle cx="80" cy="80" r="${r}" fill="none" stroke="#1e1e38" stroke-width="12"/>
-        <circle cx="80" cy="80" r="${r}" fill="none" stroke="var(--gold)" stroke-width="12"
-          stroke-dasharray="${dash} ${circ}" stroke-linecap="round"
-          style="transition:stroke-dasharray 0.5s ease"/>
-      </svg>
-      <div class="ring-center">
-        <div class="ring-num">${done}</div>
-        <div class="ring-sub">/ ${total} MASHQ</div>
-        <div style="font-size:13px;color:var(--gold);margin-top:4px;font-weight:700">${pct}%</div>
-      </div>
-    </div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">`;
-
-  [1,2,3].forEach(mn => {
-    const start = (mn-1)*4 + 1, end = mn*4;
-    let mDone = 0, mTotal = 0;
-    for (let w = start; w <= end; w++) {
-      weeks[w].days.forEach((_, di) => {
-        mTotal++;
-        if (completedWorkouts[`${w}-${di}`]) mDone++;
-        if (weeks[w].done) completedWorkouts[`${w}-${di}`] = true;
-      });
+function rProgress(){
+  var total=36; var done=0;
+  for(var k in DONE){ if(DONE[k]) done++; }
+  // count weeks[w].done
+  for(var wi=1;wi<=12;wi++){
+    if(W[wi].done) W[wi].days.forEach(function(_,di){ DONE[wi+'-'+di]=true; });
+  }
+  for(var k in DONE){ if(DONE[k]) done++; }
+  // recount properly
+  done=0;
+  for(var wi=1;wi<=12;wi++){
+    W[wi].days.forEach(function(_,di){
+      if(W[wi].done||DONE[wi+'-'+di]) done++;
+    });
+  }
+  var pct=Math.round(done/total*100);
+  var r=64; var circ=2*Math.PI*r; var dash=circ*(done/total);
+  var html='<div class="st">Umumiy progress</div>';
+  html+='<div class="ring-wrap"><svg width="150" height="150" viewBox="0 0 150 150"><circle cx="75" cy="75" r="'+r+'" fill="none" stroke="#1e1e38" stroke-width="12"/><circle cx="75" cy="75" r="'+r+'" fill="none" stroke="var(--gold)" stroke-width="12" stroke-dasharray="'+dash+' '+circ+'" stroke-linecap="round"/></svg><div class="ring-center"><div class="rnum">'+done+'</div><div class="rsub">/ '+total+' MASHQ</div><div style="font-size:13px;color:var(--gold);font-weight:700;margin-top:4px">'+pct+'%</div></div></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:15px">';
+  var mc2={1:'#4a7acc',2:'#4aaa78',3:'#c9a84c'};
+  [1,2,3].forEach(function(mn){
+    var md=0,mt=0;
+    for(var wi=(mn-1)*4+1;wi<=mn*4;wi++){
+      W[wi].days.forEach(function(_,di){ mt++; if(W[wi].done||DONE[wi+'-'+di]) md++; });
     }
-    const mColors = {1:'#4a7acc',2:'#4aaa78',3:'#c9a84c'};
-    html += `<div style="background:var(--bg2);border:1px solid ${mColors[mn]}33;border-radius:12px;padding:12px;text-align:center">
-      <div style="font-size:11px;color:var(--text-dim)">${mn}-OY</div>
-      <div style="font-size:22px;font-weight:700;color:${mColors[mn]};font-family:'Bebas Neue',sans-serif;margin:4px 0">${mDone}/${mTotal}</div>
-    </div>`;
+    html+='<div style="background:var(--bg2);border:1px solid '+mc2[mn]+'33;border-radius:11px;padding:11px;text-align:center"><div style="font-size:11px;color:var(--dim)">'+mn+'-OY</div><div style="font-size:20px;font-weight:700;color:'+mc2[mn]+';font-family:Bebas Neue,sans-serif;margin:3px 0">'+md+'/'+mt+'</div></div>';
   });
-
-  html += `</div><div class="sec-title">Mashg'ulotlar</div>`;
-
-  // Per week checklist
-  for (let w = 1; w <= 12; w++) {
-    const wd = weeks[w];
-    const wDone = wd.done || wd.days.every((_,di) => completedWorkouts[`${w}-${di}`]);
-    html += `<div style="background:var(--bg2);border:1px solid ${wDone?'#2a4a2a':'#2a2a4e'};border-radius:12px;padding:12px 14px;margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div>
-          <span style="font-size:11px;color:var(--text-dim)">${w}-HAFTA</span>
-          <span style="font-size:11px;color:#445566;margin-left:6px">${wd.split}</span>
-        </div>
-        ${wDone ? '<span style="color:#4aaa78;font-size:12px">✓ Tugadi</span>' : ''}
-      </div>
-      <div style="display:flex;gap:8px">`;
-    wd.days.forEach((day, di) => {
-      const k = `${w}-${di}`;
-      const isDone = wd.done || completedWorkouts[k];
-      html += `<button onclick="toggleWorkout(${w},${di})" style="flex:1;padding:8px 4px;border-radius:8px;border:1px solid ${isDone?'#2a4a2a':'#2a2a4e'};background:${isDone?'#0d1f0d':'var(--bg)'};color:${isDone?'#4aaa78':'var(--text-dim)'};font-size:11px;cursor:pointer;font-weight:600">
-        ${isDone?'✓ ':''} ${day.day.slice(0,3)}
-      </button>`;
+  html+='</div><div class="st">Mashg\'ulotlar</div>';
+  for(var wi=1;wi<=12;wi++){
+    var wd=W[wi];
+    var allDone=wd.done||wd.days.every(function(_,di){return DONE[wi+'-'+di];});
+    html+='<div class="wbox" style="border-color:'+(allDone?'#2a4a2a':'#2a2a3e')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:11px;color:var(--dim)">'+wi+'-HAFTA <span style="color:#445566">'+wd.sp+'</span></span>'+(allDone?'<span style="color:#4aaa78;font-size:11px">Tugadi</span>':'')+'</div><div style="display:flex;gap:7px">';
+    wd.days.forEach(function(day,di){
+      var isDone=wd.done||DONE[wi+'-'+di];
+      html+='<button class="pbtn'+(isDone?' done':'')+'" onclick="tW('+wi+','+di+')">'+(isDone?'&#10003; ':'')+day.dy.slice(0,3)+'</button>';
     });
-    html += `</div></div>`;
+    html+='</div></div>';
   }
-
-  document.getElementById('screen-progress').innerHTML = html;
+  document.getElementById('s-progress').innerHTML=html;
 }
 
-function renderInfo() {
-  const tips = [
-    {e:'💧',t:"Suv",d:"Kuniga kamida 3 litr. Trenirovka kunlari 3.5L."},
-    {e:'😴',t:"Uyqu",d:"7-9 soat. Mushak uyquda o'sadi — bu muhim."},
-    {e:'📈',t:"Progressive Overload",d:"Har haftada +2.5-5kg. Bu asosiy qoida."},
-    {e:'🔥',t:"Isitish (Warm-up)",d:"Har seansdan oldin 5-10 daqiqa. Shikastni oldini oladi."},
-    {e:'🧘',t:"Cho'zilish",d:"Trenirovkadan keyin 5 daqiqa stretching."},
-    {e:'📸',t:"Progress tekshiruvi",d:"Har oyning 1-kunida foto va og'irlik o'lchov."},
-    {e:'🚫',t:"Skip qilma",d:"O'tkazib yuborsang, oddiy rejani davom et. Ikki katta seans zarari."},
-    {e:'🍳',t:"Meal Prep",d:"Haftada 2 marta ovqat tayyorlasang vaqt va pul tejaydi."},
+function rInfo(){
+  var tips=[
+    {e:'&#x1F4A7;',t:"Suv",d:"Kuniga kamida 3 litr. Trenirovka kunlari 3.5L."},
+    {e:'&#x1F634;',t:"Uyqu",d:"7-9 soat. Mushak uyquda o'sadi."},
+    {e:'&#x1F4C8;',t:"Progressive Overload",d:"Har haftada +2.5-5kg. Bu asosiy qoida."},
+    {e:'&#x1F525;',t:"Isitish (Warm-up)",d:"Har seansdan oldin 5-10 daqiqa."},
+    {e:'&#x1F9D8;',t:"Cho'zilish",d:"Trenirovkadan keyin 5 daqiqa stretching."},
+    {e:'&#x1F4F8;',t:"Progress tekshiruvi",d:"Har oyning 1-kunida foto va og'irlik o'lchov."},
+    {e:'&#x1F373;',t:"Meal Prep",d:"Haftada 2 marta ovqat tayyorla — vaqt tejaydi."},
+    {e:'&#x1F6AB;',t:"Skip qilma",d:"O'tkazib yuborsang, oddiy rejani davom et."}
   ];
-
-  let html = `<div style="background:var(--bg2);border:1px solid #2a2a4e;border-radius:14px;padding:14px 16px;margin-bottom:12px">
-    <div class="sec-title" style="margin-bottom:10px">📅 3 oylik reja tuzilmasi</div>`;
-
+  var html='<div class="card" style="padding:14px 16px;margin-bottom:12px"><div class="st" style="margin-bottom:10px">3 oylik reja tuzilmasi</div>';
   [{m:"1-OY (1-4 hafta)",s:"Full Body",d:"Texnika + asos",c:"#4a7acc"},
    {m:"2-OY (5-8 hafta)",s:"Push/Pull/Legs",d:"Kuch + intensivlik",c:"#4aaa78"},
    {m:"3-OY (9-12 hafta)",s:"Upper/Lower",d:"Maksimal o'sish",c:"#c9a84c"}
-  ].forEach(r => {
-    html += `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a30">
-      <div style="width:3px;background:${r.c};border-radius:2px;flex-shrink:0"></div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:${r.c}">${r.m}</div>
-        <div style="font-size:13px;color:var(--text)">${r.s} — ${r.d}</div>
-      </div>
-    </div>`;
+  ].forEach(function(r){
+    html+='<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a30"><div style="width:3px;background:'+r.c+';border-radius:2px;flex-shrink:0"></div><div><div style="font-size:12px;font-weight:700;color:'+r.c+'">'+r.m+'</div><div style="font-size:13px">'+r.s+' - '+r.d+'</div></div></div>';
   });
-  html += `</div>`;
-
-  tips.forEach(tip => {
-    html += `<div class="info-card">
-      <span class="info-icon">${tip.e}</span>
-      <div><div class="info-title">${tip.t}</div><div class="info-text">${tip.d}</div></div>
-    </div>`;
+  html+='</div>';
+  tips.forEach(function(tip){
+    html+='<div class="ic"><span style="font-size:20px">'+tip.e+'</span><div><div style="color:var(--gold);font-size:12px;font-weight:700;margin-bottom:3px">'+tip.t+'</div><div style="color:#b0a898;font-size:13px;line-height:1.5">'+tip.d+'</div></div></div>';
   });
-
-  html += `<div class="result-box">
-    <div style="color:#4aaa78;font-weight:700;font-size:14px;margin-bottom:8px">🏆 3 oydan keyin kutilgan natija</div>
-    <div style="color:#7aaa7a;font-size:13px;line-height:1.8">
-      • 3–6 kg toza mushak massasi<br>
-      • Bench: +20-30kg · Squat: +30-40kg · Deadlift: +40-50kg<br>
-      • Tana kompozitsiyasi sezilarli yaxshilanadi<br>
-      • Mushak ta'rifi paydo bo'la boshlaydi
-    </div>
-  </div>`;
-
-  document.getElementById('screen-info').innerHTML = html;
+  html+='<div class="rbox"><div style="color:#4aaa78;font-weight:700;font-size:14px;margin-bottom:8px">&#x1F3C6; 3 oydan keyin kutilgan natija</div><div style="color:#7aaa7a;font-size:13px;line-height:1.8">3-6 kg toza mushak massasi<br>Bench: +20-30kg | Squat: +30-40kg | Deadlift: +40-50kg<br>Tana kompozitsiyasi sezilarli yaxshilanadi</div></div>';
+  document.getElementById('s-info').innerHTML=html;
 }
 
-// ─── INTERACTIONS ─────────────────────────────────────────────────────────────
-function switchTab(tab, btn) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('screen-' + tab).classList.add('active');
-  btn.classList.add('active');
-  openCard = null; openMeal = null;
-  if (tab === 'mashq') renderMashq();
-  else if (tab === 'ovqat') renderOvqat();
-  else if (tab === 'progress') renderProgress();
-  else if (tab === 'info') renderInfo();
+function selW(w){ CW=w; OC=null; rMashq(); }
+function selM(m){ CW=(m-1)*4+1; OM=null; rOvqat(); }
+function tC(id){ OC=OC===id?null:id; rMashq(); }
+function tM(i){ OM=OM===i?null:i; rOvqat(); }
+function tW(w,di){
+  if(W[w].done) return;
+  var k=w+'-'+di;
+  DONE[k]=!DONE[k];
+  rProgress();
 }
 
-function selectWeek(w) {
-  currentWeek = w; openCard = null;
-  renderMashq();
-}
-
-function selectMonth(m) {
-  // find first week of that month
-  currentWeek = (m-1)*4 + 1;
-  openMeal = null;
-  renderOvqat();
-}
-
-function toggleCard(id) {
-  openCard = openCard === id ? null : id;
-  renderMashq();
-}
-
-function toggleMeal(i) {
-  openMeal = openMeal === i ? null : i;
-  renderOvqat();
-}
-
-function toggleWorkout(w, di) {
-  if (weeks[w].done) return;
-  const k = `${w}-${di}`;
-  completedWorkouts[k] = !completedWorkouts[k];
-  localStorage.setItem('cw', JSON.stringify(completedWorkouts));
-  renderProgress();
-}
-
-function dismissBanner() {
-  localStorage.setItem('bannerDismissed', '1');
-  renderMashq();
-}
-
-// ─── INIT ────────────────────────────────────────────────────────────────────
-renderMashq();
-
-// Service Worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
-}
+// init
+rMashq();
 </script>
 </body>
 </html>
